@@ -38,7 +38,6 @@ let register = (req, res) => {
                 }
             })
     })
-
 }
 
 const login = (req, res) => {
