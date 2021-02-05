@@ -10,8 +10,8 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import axios from 'axios';
-import SignIn from "../SignIn/SignIn";
-import {useHistory} from "react-router-dom";
+import {Route, useHistory} from "react-router-dom";
+import Profile from "../Profile/Profile";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -42,7 +42,7 @@ function SignUp(props) {
         email: '',
         password: '',
     });
-    const [showSomething, setShowSomething] = useState();
+    const [showProfile, setShowProfile] = useState();
 
     const changeData = (event) => {
         setData({...data, [event.target.name]: event.target.value})
@@ -52,106 +52,102 @@ function SignUp(props) {
         e.preventDefault();
         axios.post("http://localhost:9000/SignUp", data)
             .then(myData => {
-                if (myData.message = 'Login Successful!') {
-                    setShowSomething(true);
+                if (myData.message = "Login Successful!") {
+                    history.push('/profile');
                 } else {
-                    alert('some');
+                    alert(myData.message);
                 }
             })
             .catch(error => alert(error))
     }
 
     return (
-        <div>
-            {showSomething ? <SignIn/> :
-                <Container component="main" maxWidth="xs">
-                    <CssBaseline/>
-                    <div className={classes.paper}>
-                        <Avatar className={classes.avatar}>
-                            <LockOutlinedIcon/>
-                        </Avatar>
-                        <Typography component="h1" variant="h5">
-                            Sign up
-                        </Typography>
-                        <form className={classes.form} noValidate>
-                            <Grid container spacing={2}>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        autoComplete="fname"
-                                        name="firstName"
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        id="firstName"
-                                        label="First Name"
-                                        autoFocus
-                                        value={data.firstName}
-                                        onChange={(event) => changeData(event)}
-                                    />
-                                </Grid>
-                                <Grid item xs={12} sm={6}>
-                                    <TextField
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        id="lastName"
-                                        label="Last Name"
-                                        name="lastName"
-                                        autoComplete="lname"
-                                        value={data.lastName}
-                                        onChange={(event) => changeData(event)}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        id="email"
-                                        label="Email Address"
-                                        name="email"
-                                        autoComplete="email"
-                                        value={data.email}
-                                        onChange={(event) => changeData(event)}
-                                    />
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <TextField
-                                        variant="outlined"
-                                        required
-                                        fullWidth
-                                        name="password"
-                                        label="Password"
-                                        type="password"
-                                        id="password"
-                                        value={data.password}
-                                        autoComplete="current-password"
-                                        onChange={(event) => changeData(event)}
-                                    />
-                                </Grid>
-                            </Grid>
-                            <Button
-                                type="submit"
+        <Container component="main" maxWidth="xs">
+            <CssBaseline/>
+            <div className={classes.paper}>
+                <Avatar className={classes.avatar}>
+                    <LockOutlinedIcon/>
+                </Avatar>
+                <Typography component="h1" variant="h5">
+                    Sign up
+                </Typography>
+                <form className={classes.form} noValidate>
+                    <Grid container spacing={2}>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                autoComplete="fname"
+                                name="firstName"
+                                variant="outlined"
+                                required
                                 fullWidth
-                                variant="contained"
-                                color="primary"
-                                className={classes.submit}
-                                onClick={e => callAPI(e)}
-                            >
-                                Sign Up
-                            </Button>
-                            <Grid container justify="flex-end">
-                                <Grid item>
-                                    <Link href="/SignIn" variant="body2">
-                                        Already have an account?
-                                    </Link>
-                                </Grid>
-                            </Grid>
-                        </form>
-                    </div>
-                </Container>
-            }
-        </div>
+                                id="firstName"
+                                label="First Name"
+                                autoFocus
+                                value={data.firstName}
+                                onChange={(event) => changeData(event)}
+                            />
+                        </Grid>
+                        <Grid item xs={12} sm={6}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="lastName"
+                                label="Last Name"
+                                name="lastName"
+                                autoComplete="lname"
+                                value={data.lastName}
+                                onChange={(event) => changeData(event)}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                id="email"
+                                label="Email Address"
+                                name="email"
+                                autoComplete="email"
+                                value={data.email}
+                                onChange={(event) => changeData(event)}
+                            />
+                        </Grid>
+                        <Grid item xs={12}>
+                            <TextField
+                                variant="outlined"
+                                required
+                                fullWidth
+                                name="password"
+                                label="Password"
+                                type="password"
+                                id="password"
+                                value={data.password}
+                                autoComplete="current-password"
+                                onChange={(event) => changeData(event)}
+                            />
+                        </Grid>
+                    </Grid>
+                    <Button
+                        type="submit"
+                        fullWidth
+                        variant="contained"
+                        color="primary"
+                        className={classes.submit}
+                        onClick={e => callAPI(e)}
+                    >
+                        Sign Up
+                    </Button>
+                    <Grid container justify="flex-end">
+                        <Grid item>
+                            <Link href="/SignIn" variant="body2">
+                                Already have an account?
+                            </Link>
+                        </Grid>
+                    </Grid>
+                </form>
+            </div>
+        </Container>
     );
 }
 

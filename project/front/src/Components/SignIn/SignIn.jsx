@@ -10,6 +10,8 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import axios from "axios";
+import Profile from "../Profile/Profile";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -33,10 +35,12 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn() {
     const classes = useStyles();
+    const history = useHistory()
     const [data, setData] = useState({
         email: '',
         password: '',
     });
+    const [showProfile, setShowProfile] = useState();
 
     const changeData = (event) => {
         setData({...data, [event.target.name]: event.target.value})
@@ -45,7 +49,14 @@ export default function SignIn() {
     const callAPI = (e) => {
         e.preventDefault();
         axios.post("http://localhost:9000/SignIn", data)
-            .then(myData => console.log(myData.data.token))
+            .then(myData => {
+                    if (myData.message = "Login Successful!") {
+                        history.push('profile')
+                    } else {
+                        alert('Something is wrong');
+                    }
+                }
+            )
             .catch(error => alert(error));
     }
 

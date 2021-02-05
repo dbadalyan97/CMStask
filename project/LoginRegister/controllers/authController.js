@@ -1,77 +1,87 @@
-const User = require('../models/User');
+const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/User')
 
-let register = (req, res) => {
-    bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
-        if (err) {
+const register = (req, res) =>
+{
+    bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
+        if (err)
+        {
             res.json({
                 error: err
             })
         }
         let user = new User({
-            firstName: req.body.firstName,
+            firstName: req.body.firtName,
             lastName: req.body.lastName,
             email: req.body.email,
             password: hashedPassword
         })
-        User.findOne({ email: user.email })
-            .then(us => {
-                console.log(us)
-                if (us) {
-                    res.json({
-                        message: 'This user already exsist'
-                    })
-                }
-                else {
-                    user.save()
-                        .then(user => {
-                            res.json({
-                                message: 'User added successfully'
-                            })
-                        })
-                        .catch(error => {
-                            res.json({
-                                message: 'An error occured'
-                            })
-                        })
-                }
+        let finded = await User.findOne({email: user.email})
+        console.log(finded)
+        if (finded)
+        {
+            res.json({
+                message: 'This email already exsist'
             })
+        }
+        else
+        {
+            let savedUser = await user.save();
+            if (savedUser)
+            {
+                res.json({
+                    message: 'User added successfully'
+                })
+            }
+            else
+            {
+                res.json({
+                    message: 'An error occured'
+                })
+            }
+        }
     })
 }
 
-const login = (req, res) => {
+const login = async (req, res) =>
+{
     let email = req.body.email;
-    let password = req.body.password
-    User.findOne({ email })
-        .then(user => {
-            console.log(req.body)
-            if (user) {
-                bcrypt.compare(password, user.password, (err, result) => {
-                    if (err) {
-                        res.json({
-                            error: err
-                        })
-                    }
-                    console.log(result)
-                    if (result) {
-                        let token = jwt.sign({ name: user.name }, 'verySecretValue', { expiresIn: '1h' })
-                        res.json({
-                            message: 'Login Successful!',
-                            token
-                        })
-                    } else {
-                        res.json({
-                            message: 'Password does not matches!'
-                        })
-                    }
-                })
-            } else {
+    let password = req.body.password;
+
+    let findedEmail = await User.findOne({email})
+    if (findedEmail)
+    {
+        bcrypt.compare(password, findedEmail.password, (err, result) => {
+
+            if (err)
+            {
                 res.json({
-                    message: 'No user found!'
+                    message: err
+                })
+            }
+            if (result)
+            {
+                console.log(findedEmail.email)
+                let token = jwt.sign({ name: findedEmail.email }, 'verySecretValue', { expiresIn: '1h' })
+                res.json({
+                    message: 'Login Successful!',
+                    token
+                })
+            }else{
+                res.json({
+                    message: 'Password does not matches!'
                 })
             }
         })
+    }
+    else
+    {
+        res.json({
+            message: 'This email isnt exisit'
+        })
+    }
 }
 
 module.exports = { register, login };
