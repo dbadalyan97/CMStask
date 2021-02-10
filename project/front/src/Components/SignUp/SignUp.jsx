@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -10,8 +10,7 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import axios from 'axios';
-import {Route, useHistory} from "react-router-dom";
-import Profile from "../Profile/Profile";
+import {useHistory} from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -33,7 +32,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function SignUp(props) {
+function SignUp() {
     const history = useHistory();
     const classes = useStyles();
     const [data, setData] = useState({
@@ -42,7 +41,6 @@ function SignUp(props) {
         email: '',
         password: '',
     });
-    const [showProfile, setShowProfile] = useState();
 
     const changeData = (event) => {
         setData({...data, [event.target.name]: event.target.value})
@@ -52,10 +50,10 @@ function SignUp(props) {
         e.preventDefault();
         axios.post("http://localhost:9000/SignUp", data)
             .then(myData => {
-                if (myData.message = "Login Successful!") {
+                if (myData.data.message === "Login Successful!") {
                     history.push('/profile');
                 } else {
-                    alert(myData.message);
+                    alert(myData.data.message);
                 }
             })
             .catch(error => alert(error))

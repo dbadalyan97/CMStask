@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -35,12 +35,11 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn() {
     const classes = useStyles();
-    const history = useHistory()
+    const history = useHistory();
     const [data, setData] = useState({
         email: '',
         password: '',
     });
-    const [showProfile, setShowProfile] = useState();
 
     const changeData = (event) => {
         setData({...data, [event.target.name]: event.target.value})
@@ -50,8 +49,9 @@ export default function SignIn() {
         e.preventDefault();
         axios.post("http://localhost:9000/SignIn", data)
             .then(myData => {
-                    if (myData.message = "Login Successful!") {
-                        history.push('profile')
+                    if (myData.data.message === "Login Successful!") {
+                        localStorage.setItem('logIn', "Auto SignIn");
+                        history.push('profile');
                     } else {
                         alert('Something is wrong');
                     }
