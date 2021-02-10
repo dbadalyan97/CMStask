@@ -1,16 +1,14 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
+const jwt = require("jsonwebtoken");
 const User = require('../models/User');
 const objects = require('../models/objects');
 const {verify} = require('../middleware/jwt')
 
 
-const register = (req, res) =>
-{
+const register = (req, res) => {
     bcrypt.hash(req.body.password, 10, async (err, hashedPassword) => {
-        if (err)
-        {
+        if (err) {
             res.json({
                 error: err
             })
@@ -23,23 +21,17 @@ const register = (req, res) =>
         })
         let finded = await User.findOne({email: user.email})
         console.log(finded)
-        if (finded)
-        {
+        if (finded) {
             res.json({
                 message: 'This email already exsist'
             })
-        }
-        else
-        {
+        } else {
             let savedUser = await user.save();
-            if (savedUser)
-            {
+            if (savedUser) {
                 res.json({
                     message: 'User added successfully'
                 })
-            }
-            else
-            {
+            } else {
                 res.json({
                     message: 'An error occured'
                 })
@@ -48,106 +40,42 @@ const register = (req, res) =>
     })
 }
 
-// const login = async (req, res) =>
-// {
-//     let email = req.body.email;
-//     let password = req.body.password;
 
-//     let findedEmail = await User.findOne({email})
-//     if (findedEmail)
-//     {
-//         bcrypt.compare(password, findedEmail.password, async (err, result) => 
-//         {
-
-//             if (err)
-//             {
-//                 res.json({
-//                     message: err
-//                 })
-//             }
-//             if (result)
-//             {
-//                 console.log(findedEmail.email)
-//                 let token = jwt.sign({ name: findedEmail.email }, 'verySecretValue', { expiresIn: '1h' })
-//                 const findedObj = await objects.findOne({createdBy: req.body.id})
-//                 console.log(req.body._id)
-//                 console.log(findedObj)
-//                 res.json({
-//                     message: 'Login Successful!',
-//                     token,
-//                     id: findedEmail._id,
-//                     object: findedObj
-//                 })
-
-//             }else{
-//                 res.json({
-//                     message: 'Password does not matches!'
-//                 })
-//             }
-//         })
-//     }
-//     else
-//     {
-//         res.json({
-//             message: 'This email isnt exisit'
-//         })
-//     }
-// }
-
-
-
-const login = async (req, res) =>
-{
+const login = async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
 
     let findedEmail = await User.findOne({email})
-    if (findedEmail)
-    {
-        bcrypt.compare(password, findedEmail.password, async (err, result) => 
-        {
+    if (findedEmail) {
+        bcrypt.compare(password, findedEmail.password, async (err, result) => {
 
-            if (err)
-            {
+            if (err) {
                 res.json({
                     message: err
                 })
             }
-            if (result)
-            {
-                console.log(findedEmail.email)
-                const findedObj = await objects.findOne({createdBy: req.body.id})
+            if (result) {
+                console.log(findedEmail)
+                const findedObj = await objects.findOne({createdBy: findedEmail._id})
                 let payload = {id: findedEmail._id, object: findedObj}
+                console.log(payload)
 
-                let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
+                let accessToken = jwt.sign(payload, "gaxtni", {
                     algorithm: "HS256",
-                    expiresIn: process.env.ACCESS_TOKEN_LIFE
+                    expiresIn: "1h"
                 })
 
-                // let refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, {
-                //     algorithm: "HS256",
-                //     expiresIn: process.env.REFRESH_TOKEN_LIFE
-                // })
+                //res.cookie("jwt", accessToken, {secure: true, httpOnly: true, maxAge: 100000})
+                //console.log(res.cookie("jwt", accessToken, {secure: true, httpOnly: true}))
+                res.json({user: findedEmail, token: accessToken})
 
-                res.cookie("jwt", accessToken, {secure: true, httpOnly: true})
-                res.send()
-
-
-                // res.json({
-                //     message: 'Login Successful!',
-                //     token,
-                //     object: findedObj
-                // })
-
-            }else{
+            } else {
                 res.json({
                     message: 'Password does not matches!'
                 })
             }
         })
-    }
-    else
-    {
+    } else {
         res.json({
             message: 'This email isnt exisit'
         })
@@ -155,8 +83,7 @@ const login = async (req, res) =>
 }
 
 
-const profile = async (req, res) =>
-{
+const profile = async (req, res) => {
     const object = new objects({
         name: req.body.name,
         fields: req.body.fields,
@@ -172,4 +99,4 @@ const profile = async (req, res) =>
 
 }
 
-module.exports = { register, login, profile }; 
+module.exports = {register, login, profile};

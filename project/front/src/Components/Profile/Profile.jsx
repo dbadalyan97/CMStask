@@ -2,14 +2,12 @@ import React, {useState} from "react";
 import {makeStyles} from '@material-ui/core/styles';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import TextField from '@material-ui/core/TextField';
-import {v4 as uuid_v4} from "uuid";
-
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
-// import axios from "axios";
+import axios from "axios";
 import {useHistory} from "react-router-dom";
-// import Container from "@material-ui/core/Container";
+
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -80,6 +78,18 @@ const useStyles = makeStyles((theme) => ({
         marginTop: "170px",
         marginLeft: '-250px'
     },
+    addTagBtn: {
+        backgroundColor: '#797171',
+        color: 'black',
+        width: '127px',
+        fontSize: '13px',
+        padding: '13px 20px',
+        border: 'none',
+        cursor: 'pointer',
+        borderRadius: '5px',
+        marginTop: "170px",
+        marginLeft: '-250px'
+    },
     header: {
         width: '100%',
     },
@@ -116,6 +126,9 @@ function Profile() {
     const [keyObj, setKeyObj] = useState('');
     const [valueObj, setValueObj] = useState('');
     const [typeObj, setTypeObj] = useState('');
+    const [nameObj, setNameObj] = useState('');
+    const [tagsObj, setTagsObj] = useState('');
+    const [myObjArr, setMyObjArr] = useState({});
 
     const history = useHistory();
     const classes = useStyles();
@@ -128,8 +141,16 @@ function Profile() {
         setOpen(false);
     };
 
+    const addKeyValue = () => {
+        if (keyObj && valueObj) {
+            setMyObjArr({...myObjArr, [keyObj]: valueObj});
+        }
+        setKeyObj('');
+        setValueObj('');
+    }
+
     const addObj = () => {
-        setCountObj([...countObj, {name: []}]);
+        setCountObj([...countObj, {}]);
     }
 
     const logOut = () => {
@@ -138,10 +159,15 @@ function Profile() {
     }
 
     const changeObj = (event) => {
-        // console.log(event.target.name);
-        if (event.target.name === 'Key' || event.target.name === 'name') setKeyObj(event.target.value);
-        else if (event.target.name === 'Value') setValueObj(event.target.value);
-        else if (event.target.name === 'Type') setTypeObj(event.target.value);
+        if (event.target.name === 'key') setKeyObj(event.target.value);
+        else if (event.target.name === 'value') setValueObj(event.target.value);
+        else if (event.target.name === 'type') {
+            setTypeObj(event.target.value);
+            setKeyObj('');
+            setValueObj('');
+            setMyObjArr({});
+        } else if (event.target.name === 'name') setNameObj(event.target.name);
+        else if (event.target.name === 'tagsObj') setTagsObj(event.target.value.split(","));
     }
 
     return (
@@ -152,7 +178,6 @@ function Profile() {
                 </div>
             </header>
             <div className={classes.root}>
-
                 <AddCircleOutlineIcon className={classes.btn} onClick={handleOpen}/>
                 <TextField className={classes.input} label="Filter"/>
                 <Modal
@@ -165,8 +190,7 @@ function Profile() {
                     BackdropComponent={Backdrop}
                     BackdropProps={{
                         timeout: 500,
-                    }}
-                >
+                    }}>
                     <Fade in={open}>
                         <div className={classes.paper}>
                             <TextField
@@ -180,15 +204,18 @@ function Profile() {
                                     shrink: true,
                                 }}
                                 name="name"
-                                value={keyObj}
+                                value={nameObj}
                                 onChange={changeObj}
                             />
                             <div className={classes.objBlock}>
                                 <div className={classes.obj}>
-                                    <TextField name="Key" value={keyObj} onChange={changeObj}/>
-                                    {typeObj === 'Text' ? <TextField name="Value" value={valueObj}
-                                                                    onChange={changeObj}/> :
-                                        <input type="file"/>}
+                                    <TextField name="key" label="Key" value={keyObj} onChange={changeObj}/>
+                                    {typeObj === 'File' ?
+                                        <input type="file"/>
+                                        : typeObj === 'Text' ?
+                                            <textarea value={valueObj} onChange={changeObj}/> :
+                                            <TextField name="value" label="Value" value={valueObj}
+                                                       onChange={changeObj}/>}
                                     <select className={classes.chooseType} name="type" onChange={changeObj}>
                                         <option value="String">String</option>
                                         <option value="File">File</option>
@@ -196,11 +223,14 @@ function Profile() {
                                     </select>
                                 </div>
                                 <div>
-                                    <AddCircleOutlineIcon className={classes.modalBtn} onClick={addObj}/>
+                                    <AddCircleOutlineIcon className={classes.modalBtn}/>
                                 </div>
                             </div>
-                            <TextField className={classes.input} label="Tag"/>
-                            <button className={classes.addBtn}>ADD</button>
+                            <div style={{display: "flex"}}>
+                                <TextField className={classes.input} name="tagsObj" label="Tags" value={tagsObj}
+                                           onChange={changeObj}/>
+                                <button className={classes.addBtn} onClick={addObj}>ADD</button>
+                            </div>
                         </div>
                     </Fade>
                 </Modal>

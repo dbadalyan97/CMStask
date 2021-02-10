@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const morgan = require('morgan')
 const bodyParser = require('body-parser')
+const cookieParser = require('cookie-parser');
 const authRoute = require('./routes/auth')
 const cors = require("cors")
 const app = express()
@@ -26,7 +27,8 @@ app.use(cors());
 app.use(morgan('dev'))
 app.use(bodyParser.urlencoded({extended: true}))
 app.use(bodyParser.json())
-app.use("/testAPI", testAPIRouter);
+app.use("/testAPI", testAPIRouter)
+app.use(cookieParser())
 
 const PORT = process.env.PORT || 9000
 

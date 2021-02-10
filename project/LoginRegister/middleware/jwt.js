@@ -1,4 +1,4 @@
-const jwt = require('json-web-token')
+const jwt = require('jsonwebtoken')
 
 exports.verify = function(req, res, next){
     let accessToken = req.cookies.jwt
@@ -9,7 +9,7 @@ exports.verify = function(req, res, next){
 
     let payload
     try{
-        payload = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET)
+        payload = jwt.verify(accessToken, "gaxtni")
         next()
     }
     catch(e){

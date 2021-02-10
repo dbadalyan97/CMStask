@@ -49,11 +49,11 @@ export default function SignIn() {
         e.preventDefault();
         axios.post("http://localhost:9000/SignIn", data)
             .then(myData => {
-                    if (myData.data.message === "Login Successful!") {
-                        localStorage.setItem('logIn', "Auto SignIn");
-                        history.push('profile');
-                    } else {
+                    if (myData.data.message === 'Password does not matches!') {
                         alert('Something is wrong');
+                    } else {
+                        console.log(myData);
+                        localStorage.setItem('logIn', myData.data.token);
                     }
                 }
             )

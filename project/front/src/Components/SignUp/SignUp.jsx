@@ -50,10 +50,12 @@ function SignUp() {
         e.preventDefault();
         axios.post("http://localhost:9000/SignUp", data)
             .then(myData => {
-                if (myData.data.message === "Login Successful!") {
-                    history.push('/profile');
-                } else {
+                console.log(myData)
+                if (myData.data.message === "Password does not matches!") {
                     alert(myData.data.message);
+                } else {
+                    localStorage.setItem('logIn', myData.data.token);
+                    history.push('/profile');
                 }
             })
             .catch(error => alert(error))
