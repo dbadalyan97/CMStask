@@ -42,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
         boxShadow: theme.shadows[5],
         padding: theme.spacing(2, 4, 3),
         width: '700px',
-        height: '600px'
     },
     textField: {
         marginLeft: theme.spacing(1),
@@ -51,7 +50,7 @@ const useStyles = makeStyles((theme) => ({
     },
     obj: {
         display: "flex",
-        flexDirection: "row",
+        flexDirection: "column-reverse",
         width: '90%',
         margin: '6px',
         justifyContent: 'space-between',
@@ -64,20 +63,24 @@ const useStyles = makeStyles((theme) => ({
     },
     chooseType: {
         border: 'none',
-
+        backgroundColor: "#3c3434",
+        width: "100%",
+        fontSize: "36px",
+        color: "white"
     },
     addBtn: {
-        backgroundColor: '#797171',
-        color: 'black',
-        width: '100px',
-        fontSize: '16px',
+        backgroundColor: '#4a4343',
+        color: 'white',
+        width: '150px',
+        fontSize: "30px",
         padding: '16px 30px',
         border: 'none',
         cursor: 'pointer',
         borderRadius: '5px',
         marginTop: "170px",
-        marginLeft: '-250px'
+        marginLeft: '-250px',
     },
+
     addTagBtn: {
         backgroundColor: '#797171',
         color: 'black',
@@ -116,9 +119,10 @@ const useStyles = makeStyles((theme) => ({
     objBlock: {
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: "space-between"
+        justifyContent: "space-between",
     }
 }));
+
 
 function Profile() {
     const [open, setOpen] = useState(false);
@@ -166,7 +170,7 @@ function Profile() {
             setKeyObj('');
             setValueObj('');
             setMyObjArr({});
-        } else if (event.target.name === 'name') setNameObj(event.target.name);
+        } else if (event.target.name === 'name') setNameObj(event.target.value);
         else if (event.target.name === 'tagsObj') setTagsObj(event.target.value.split(","));
     }
 
@@ -209,14 +213,24 @@ function Profile() {
                             />
                             <div className={classes.objBlock}>
                                 <div className={classes.obj}>
-                                    <TextField name="key" label="Key" value={keyObj} onChange={changeObj}/>
                                     {typeObj === 'File' ?
                                         <input type="file"/>
                                         : typeObj === 'Text' ?
-                                            <textarea value={valueObj} onChange={changeObj}/> :
-                                            <TextField name="value" label="Value" value={valueObj}
-                                                       onChange={changeObj}/>}
-                                    <select className={classes.chooseType} name="type" onChange={changeObj}>
+                                            <div className={classes.obj}>
+                                                <textarea value={valueObj} onChange={changeObj}/>
+                                                <TextField name="key" label="Key" value={keyObj} onChange={changeObj}/>
+                                            </div> : typeObj === 'String' ?
+
+                                                <div className={classes.obj}>
+
+                                                    <TextField name="value" label="Value" value={valueObj}
+                                                               onChange={changeObj}/>
+                                                    <TextField name="key" label="Key" value={keyObj}
+                                                               onChange={changeObj}/>
+                                                </div> : null}
+                                    <select className={classes.chooseType} name="type"
+                                            onChange={changeObj}>
+                                        <option>Choose Type</option>
                                         <option value="String">String</option>
                                         <option value="File">File</option>
                                         <option value="Text">Text</option>

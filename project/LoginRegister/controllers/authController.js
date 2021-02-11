@@ -65,10 +65,8 @@ const login = async (req, res) => {
                     expiresIn: "1h"
                 })
 
-                //res.cookie("jwt", accessToken, {secure: true, httpOnly: true, maxAge: 100000})
-                //console.log(res.cookie("jwt", accessToken, {secure: true, httpOnly: true}))
-                res.json({user: findedEmail, token: accessToken})
-
+                res.cookie("jwt", accessToken, {secure: true, httpOnly: true, maxAge: 100000})
+                res.json({user: findedEmail, token: accessToken});
             } else {
                 res.json({
                     message: 'Password does not matches!'
