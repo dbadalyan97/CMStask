@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import SignIn from "./Components/SignIn/SignIn";
 import SignUp from "./Components/SignUp/SignUp";
 import {BrowserRouter, Route, Redirect, Switch} from "react-router-dom";
@@ -35,7 +35,6 @@ function App() {
 
     const routes = useRoutes(isAuthenticated);
 
-    console.log(isAuthenticated);
 
     return (
         <div className="App">

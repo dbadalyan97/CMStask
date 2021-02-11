@@ -1,13 +1,12 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {makeStyles} from '@material-ui/core/styles';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import TextField from '@material-ui/core/TextField';
 import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
-import axios from "axios";
 import {useHistory} from "react-router-dom";
-
+import axios from "axios";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -50,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     },
     obj: {
         display: "flex",
-        flexDirection: "column-reverse",
+        flexDirection: "column",
         width: '90%',
         margin: '6px',
         justifyContent: 'space-between',
@@ -120,9 +119,11 @@ const useStyles = makeStyles((theme) => ({
         display: 'flex',
         flexDirection: 'row',
         justifyContent: "space-between",
+    },
+    createObj: {
+        margin: "10px"
     }
 }));
-
 
 function Profile() {
     const [open, setOpen] = useState(false);
@@ -132,7 +133,7 @@ function Profile() {
     const [typeObj, setTypeObj] = useState('');
     const [nameObj, setNameObj] = useState('');
     const [tagsObj, setTagsObj] = useState('');
-    const [myObjArr, setMyObjArr] = useState({});
+    const [myObjArr, setMyObjArr] = useState([]);
 
     const history = useHistory();
     const classes = useStyles();
@@ -146,15 +147,27 @@ function Profile() {
     };
 
     const addKeyValue = () => {
-        if (keyObj && valueObj) {
-            setMyObjArr({...myObjArr, [keyObj]: valueObj});
-        }
+        if (keyObj && valueObj && typeObj === 'Object') {
+            setMyObjArr([...myObjArr, {[keyObj]: valueObj}]);
+        } else if (typeObj === "String" || typeObj === "Text") {
+            setMyObjArr([...myObjArr, {valueObj}])
+        } else if (typeObj === "Array") setMyObjArr(myObjArr.concat(valueObj.split(",")))
         setKeyObj('');
         setValueObj('');
     }
 
     const addObj = () => {
-        setCountObj([...countObj, {}]);
+        if (!!nameObj.trim() && !!tagsObj)
+            setCountObj([...countObj, {
+                [nameObj.trim()]: {
+                    value: [...myObjArr],
+                    tag: tagsObj,
+                    type: typeObj
+                },
+            }]);
+        else {
+            alert("fill the Name and Tags")
+        }
     }
 
     const logOut = () => {
@@ -169,11 +182,11 @@ function Profile() {
             setTypeObj(event.target.value);
             setKeyObj('');
             setValueObj('');
-            setMyObjArr({});
+            setMyObjArr([]);
         } else if (event.target.name === 'name') setNameObj(event.target.value);
-        else if (event.target.name === 'tagsObj') setTagsObj(event.target.value.split(","));
+        else if (event.target.name === 'tagsObj') setTagsObj(event.target.value);
     }
-
+    console.log(countObj)
     return (
         <>
             <header>
@@ -199,7 +212,7 @@ function Profile() {
                         <div className={classes.paper}>
                             <TextField
                                 id="standard-full-width"
-                                label="Label"
+                                label="Name"
                                 style={{margin: 8}}
                                 placeholder="Name"
                                 fullWidth
@@ -213,35 +226,44 @@ function Profile() {
                             />
                             <div className={classes.objBlock}>
                                 <div className={classes.obj}>
-                                    {typeObj === 'File' ?
-                                        <input type="file"/>
-                                        : typeObj === 'Text' ?
-                                            <div className={classes.obj}>
-                                                <textarea value={valueObj} onChange={changeObj}/>
-                                                <TextField name="key" label="Key" value={keyObj} onChange={changeObj}/>
-                                            </div> : typeObj === 'String' ?
-
-                                                <div className={classes.obj}>
-
-                                                    <TextField name="value" label="Value" value={valueObj}
-                                                               onChange={changeObj}/>
-                                                    <TextField name="key" label="Key" value={keyObj}
-                                                               onChange={changeObj}/>
-                                                </div> : null}
                                     <select className={classes.chooseType} name="type"
                                             onChange={changeObj}>
-                                        <option>Choose Type</option>
+                                        <option value="Object">Object</option>
                                         <option value="String">String</option>
                                         <option value="File">File</option>
                                         <option value="Text">Text</option>
+                                        <option value="Array">Array</option>
                                     </select>
+                                    <TextField className={classes.createObj} name="key" label="Key"
+                                               value={keyObj}
+                                               onChange={changeObj}/>
+                                    {typeObj === 'File' ? <input className={classes.createObj} type="file"/>
+                                        : typeObj === 'Text' ?
+                                            <textarea onChange={changeObj} className={classes.createObj}/>
+                                            : typeObj === 'String' ?
+                                                <TextField className={classes.createObj} name="value" label="Value"
+                                                           value={valueObj}
+                                                           onChange={changeObj}/>
+                                                : typeObj === 'Object' ?
+                                                    <div className={classes.obj}>
+                                                        <TextField className={classes.createObj} name="value"
+                                                                   label="Value"
+                                                                   value={valueObj}
+                                                                   onChange={changeObj}/>
+
+                                                    </div>
+                                                    : typeObj === 'Array' ?
+                                                        <TextField name="value" label="Value" value={valueObj}
+                                                                   onChange={changeObj} className={classes.createObj}/>
+                                                        : null}
                                 </div>
                                 <div>
-                                    <AddCircleOutlineIcon className={classes.modalBtn}/>
+                                    <AddCircleOutlineIcon className={classes.modalBtn} onClick={addKeyValue}/>
                                 </div>
                             </div>
                             <div style={{display: "flex"}}>
-                                <TextField className={classes.input} name="tagsObj" label="Tags" value={tagsObj}
+                                <TextField className={classes.input} name="tagsObj" placeholder="" label="Tags"
+                                           value={tagsObj}
                                            onChange={changeObj}/>
                                 <button className={classes.addBtn} onClick={addObj}>ADD</button>
                             </div>
@@ -254,5 +276,3 @@ function Profile() {
 }
 
 export default Profile
-
-
