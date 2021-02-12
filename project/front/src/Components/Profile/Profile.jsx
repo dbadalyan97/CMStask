@@ -182,16 +182,19 @@ function Profile() {
     }
 
 
-    const addObj = () => {
+    const addObj = (e) => {
         setUserObj({...userObj, [nameObj]: {...fieldsObj, tags: tagsObj.split(",")}});
+        passDataAPI(e);
     }
 
-    // const passDataAPI = () => {
-    //     axios.post("/profile", {[nameObj]: {...fieldsObj, tags: tagsObj.split(",")}})
-    //         .then(res => console.log(res))
-    //         .catch(err => alert(err))
-    // }
-    //
+    const passDataAPI = (e) => {
+        e.preventDefault()
+        const data = {[nameObj]: {...fieldsObj, tags: tagsObj.split(",")}}
+        axios.post("http://localhost:9000/profile", JSON.stringify(data))
+            .then(res => null)
+            .catch(err => alert(err))
+    }
+
     // useEffect(() => {
     //     passDataAPI()
     // }, [userObj])
@@ -278,12 +281,12 @@ function Profile() {
                                 <TextField className={classes.input} name="tagsObj" placeholder="" label="Tags"
                                            value={tagsObj}
                                            onChange={changeObj}/>
-                                <button className={classes.addBtn} onClick={addObj}>ADD</button>
+                                <button className={classes.addBtn} onClick={e => addObj(e)}>ADD</button>
                             </div>
                         </div>
                     </Fade>
                 </Modal>
-                <div>{JSON.stringify(userObj)}</div>
+                {/*<div>{JSON.stringify(userObj)}</div>*/}
             </div>
 
         </>

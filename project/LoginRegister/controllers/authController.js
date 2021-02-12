@@ -55,18 +55,19 @@ const login = async (req, res) => {
                 })
             }
             if (result) {
-                console.log(findedEmail)
-                const findedObj = await objects.findOne({createdBy: findedEmail._id})
-                let payload = {id: findedEmail._id, object: findedObj}
-                console.log(payload)
+                //console.log(findedEmail)
+                const findedObj = await objects.find({createdBy: findedEmail._id})
+                console.log(findedObj)
+                let payload = {id: findedEmail._id}
 
-                let accessToken = jwt.sign(payload, "gaxtni", {
+                let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
                     algorithm: "HS256",
-                    expiresIn: "1h"
+                    expiresIn: process.env.ACCESS_TOKEN_LIFE
                 })
 
-                res.cookie("jwt", accessToken, {secure: true, httpOnly: true, maxAge: 100000})
-                res.json({user: findedEmail, token: accessToken});
+                res.cookie("jwt", accessToken)
+                res.json({findedObj})
+
             } else {
                 res.json({
                     message: 'Password does not matches!'
@@ -82,12 +83,8 @@ const login = async (req, res) => {
 
 
 const profile = async (req, res) => {
-    const object = new objects({
-        name: req.body.name,
-        fields: req.body.fields,
-        tags: req.body.tags,
-        createdBy: req.body.id
-    })
+    // console.log(req.body)
+    const object = new objects({...req.body})
 
     const savedObj = await object.save()
 

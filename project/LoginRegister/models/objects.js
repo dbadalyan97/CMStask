@@ -2,21 +2,11 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const objectSchema = new Schema({
-    name: {
-      type: String,
-      required: true,
-      maxLength: 20
+  name: {
+    obj: {
+      type: {},
+      required: true
     },
-    fields: [{
-      Key: {
-        type: String,
-        required: true
-      },
-      Value: {
-        type: {},
-        required: true
-      }
-    }],
     tags: [{
       type: String
     }],
@@ -25,7 +15,8 @@ const objectSchema = new Schema({
       ref: 'User',
       required: true
     }
-  })
+  }
+})
 
 module.exports = mongoose.model('objects', objectSchema)
 
@@ -41,4 +32,32 @@ module.exports = mongoose.model('objects', objectSchema)
 // 		Value: 'someValue'
 // 	}],
 // 	tags: ['someTag', 'someTag2']
+// }
+
+
+
+// {
+//   name: {
+//     'someKey': 'someValue',
+//       'someKey': 'someValue',
+//         'someKey': 'someValue',
+//           'someKey': 'someValue',
+//             'someKey': 'someValue',
+//               'someKey': 'someValue',
+//                 'someKey': 'someValue',
+//                   'someKey': 'someValue',
+//                     'someKey': 'someValue',
+//                       'someKey': 'someValue',
+//                         'someKey': 'someValue',
+//                           'someKey': 'someValue',
+//                             'someKey': 'someValue',
+//                               'someKey': 'someValue',
+//                                 'someKey': 'someValue',
+//                                   tags: ['someTag', 'someTag2']
+//   },
+// {
+//   name2: {
+//     'someKey': 'someValue',
+//               tags: ['someTag', 'someTag2']
+//   }
 // }
