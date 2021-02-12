@@ -126,14 +126,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 function Profile() {
+    const [userObj, setUserObj] = useState({});
+
+    const [fieldsObj, setFieldsObj] = useState({});
+
+
     const [open, setOpen] = useState(false);
-    const [countObj, setCountObj] = useState([]);
+
     const [keyObj, setKeyObj] = useState('');
     const [valueObj, setValueObj] = useState('');
-    const [typeObj, setTypeObj] = useState('');
+    const [typeObj, setTypeObj] = useState('Object');
     const [nameObj, setNameObj] = useState('');
     const [tagsObj, setTagsObj] = useState('');
-    const [myObjArr, setMyObjArr] = useState([]);
+    const [nestedKey, setNestedKey] = useState('');
+    const [nestedValue, setNestedValue] = useState('');
 
     const history = useHistory();
     const classes = useStyles();
@@ -145,30 +151,6 @@ function Profile() {
     const handleClose = () => {
         setOpen(false);
     };
-
-    const addKeyValue = () => {
-        if (keyObj && valueObj && typeObj === 'Object') {
-            setMyObjArr([...myObjArr, {[keyObj]: valueObj}]);
-        } else if (typeObj === "String" || typeObj === "Text") {
-            setMyObjArr([...myObjArr, {valueObj}])
-        } else if (typeObj === "Array") setMyObjArr(myObjArr.concat(valueObj.split(",")))
-        setKeyObj('');
-        setValueObj('');
-    }
-
-    const addObj = () => {
-        if (!!nameObj.trim() && !!tagsObj)
-            setCountObj([...countObj, {
-                [nameObj.trim()]: {
-                    value: [...myObjArr],
-                    tag: tagsObj,
-                    type: typeObj
-                },
-            }]);
-        else {
-            alert("fill the Name and Tags")
-        }
-    }
 
     const logOut = () => {
         localStorage.removeItem('logIn');
@@ -182,11 +164,38 @@ function Profile() {
             setTypeObj(event.target.value);
             setKeyObj('');
             setValueObj('');
-            setMyObjArr([]);
         } else if (event.target.name === 'name') setNameObj(event.target.value);
         else if (event.target.name === 'tagsObj') setTagsObj(event.target.value);
+        else if (event.target.name === 'nestedKey') setNestedKey(event.target.value)
+        else if (event.target.name === 'nestedValue') setNestedValue(event.target.value)
     }
-    console.log(countObj)
+
+
+    const addFields = () => {
+        if (typeObj === "String" || typeObj === "Text" || typeObj === "File") {
+            setFieldsObj({...fieldsObj, [keyObj]: valueObj})
+        } else if (typeObj === "Array") {
+            setFieldsObj({...fieldsObj, [keyObj]: valueObj.split(",")})
+        } else if (typeObj === "Object") {
+            setFieldsObj({...fieldsObj, [keyObj]: {[nestedKey]: nestedValue}})
+        }
+    }
+
+
+    const addObj = () => {
+        setUserObj({...userObj, [nameObj]: {...fieldsObj, tags: tagsObj.split(",")}});
+    }
+
+    // const passDataAPI = () => {
+    //     axios.post("/profile", {[nameObj]: {...fieldsObj, tags: tagsObj.split(",")}})
+    //         .then(res => console.log(res))
+    //         .catch(err => alert(err))
+    // }
+    //
+    // useEffect(() => {
+    //     passDataAPI()
+    // }, [userObj])
+
     return (
         <>
             <header>
@@ -246,9 +255,13 @@ function Profile() {
                                                            onChange={changeObj}/>
                                                 : typeObj === 'Object' ?
                                                     <div className={classes.obj}>
-                                                        <TextField className={classes.createObj} name="value"
-                                                                   label="Value"
-                                                                   value={valueObj}
+                                                        <TextField className={classes.createObj} name="nestedKey"
+                                                                   label="NestedKey"
+                                                                   value={nestedKey}
+                                                                   onChange={changeObj}/>
+                                                        <TextField className={classes.createObj} name="nestedValue"
+                                                                   label="NestedValue"
+                                                                   value={nestedValue}
                                                                    onChange={changeObj}/>
 
                                                     </div>
@@ -258,7 +271,7 @@ function Profile() {
                                                         : null}
                                 </div>
                                 <div>
-                                    <AddCircleOutlineIcon className={classes.modalBtn} onClick={addKeyValue}/>
+                                    <AddCircleOutlineIcon className={classes.modalBtn} onClick={addFields}/>
                                 </div>
                             </div>
                             <div style={{display: "flex"}}>
@@ -270,7 +283,9 @@ function Profile() {
                         </div>
                     </Fade>
                 </Modal>
+                <div>{JSON.stringify(userObj)}</div>
             </div>
+
         </>
     )
 }
