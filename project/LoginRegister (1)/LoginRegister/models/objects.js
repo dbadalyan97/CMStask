@@ -10,11 +10,12 @@ const objectSchema = new Schema({
     tags: [{
       type: String
     }],
-    createdBy: {
-      type: mongoose.Schema.Types.ObjectID,
-      ref: 'User',
-      required: true
-    }
+   
+  },
+  createdBy: {
+    type: mongoose.Schema.Types.ObjectID,
+    ref: 'User',
+    required: true
   }
 })
 

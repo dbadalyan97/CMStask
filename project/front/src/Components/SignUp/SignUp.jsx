@@ -54,7 +54,7 @@ function SignUp() {
                 if (myData.data.message === "Password does not matches!") {
                     alert(myData.data.message);
                 } else {
-                    localStorage.setItem('logIn', myData.data.token);
+                    // localStorage.setItem('logIn', myData.data.token);
                     history.push('/profile');
                 }
             })

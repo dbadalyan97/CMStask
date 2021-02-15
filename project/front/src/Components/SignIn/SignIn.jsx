@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -10,8 +10,9 @@ import Typography from '@material-ui/core/Typography';
 import {makeStyles} from '@material-ui/core/styles';
 import Container from '@material-ui/core/Container';
 import axios from "axios";
-import Profile from "../Profile/Profile";
 import {useHistory} from "react-router-dom";
+import DataContext from '../Context/GetData';
+
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -34,12 +35,20 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SignIn() {
+
+
+    const currentData = useContext(DataContext)
+    console.log(currentData.currentData)
+    const [ndata, setNdata] = currentData.currentData;
+
+    console.log(ndata, setNdata)
     const classes = useStyles();
     const history = useHistory();
     const [data, setData] = useState({
         email: '',
         password: '',
     });
+
 
     const changeData = (event) => {
         setData({...data, [event.target.name]: event.target.value})
@@ -52,8 +61,9 @@ export default function SignIn() {
                     if (myData.data.message === 'Password does not matches!') {
                         alert('Something is wrong');
                     } else {
-                        console.log(myData);
-                        localStorage.setItem('logIn', myData.data.token);
+                        setNdata(myData.data);
+                        history.push('profile')
+                        // Cookies.set('access_token', myData.headers['x-access-token'])
                     }
                 }
             )

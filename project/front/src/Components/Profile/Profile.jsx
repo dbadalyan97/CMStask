@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {makeStyles} from '@material-ui/core/styles';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import TextField from '@material-ui/core/TextField';
@@ -7,6 +7,7 @@ import Backdrop from '@material-ui/core/Backdrop';
 import Fade from '@material-ui/core/Fade';
 import {useHistory} from "react-router-dom";
 import axios from "axios";
+import DataProvider from '../Context/GetData'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -130,7 +131,6 @@ function Profile() {
 
     const [fieldsObj, setFieldsObj] = useState({});
 
-
     const [open, setOpen] = useState(false);
 
     const [keyObj, setKeyObj] = useState('');
@@ -170,7 +170,6 @@ function Profile() {
         else if (event.target.name === 'nestedValue') setNestedValue(event.target.value)
     }
 
-
     const addFields = () => {
         if (typeObj === "String" || typeObj === "Text" || typeObj === "File") {
             setFieldsObj({...fieldsObj, [keyObj]: valueObj})
@@ -195,11 +194,10 @@ function Profile() {
             .catch(err => alert(err))
     }
 
-    // useEffect(() => {
-    //     passDataAPI()
-    // }, [userObj])
-
-    return (
+    const getData = useContext(DataProvider)
+    const dataMap = getData.current[0];
+    console.log(dataMap)
+    return ( 
         <>
             <header>
                 <div className={classes.logOutBlock}>
@@ -207,8 +205,13 @@ function Profile() {
                 </div>
             </header>
             <div className={classes.root}>
-                <AddCircleOutlineIcon className={classes.btn} onClick={handleOpen}/>
-                <TextField className={classes.input} label="Filter"/>
+                <div style={{display: "flex", flexDirection: "row"}}>
+                    <TextField className={classes.input} label="Filter"/>
+                    <AddCircleOutlineIcon className={classes.btn} onClick={handleOpen}/>
+                </div>
+                <div>
+                    {dataMap.map((val) => <a href="">{val}</a>)}
+                </div>
                 <Modal
                     aria-labelledby="transition-modal-title"
                     aria-describedby="transition-modal-description"
@@ -286,7 +289,7 @@ function Profile() {
                         </div>
                     </Fade>
                 </Modal>
-                {/*<div>{JSON.stringify(userObj)}</div>*/}
+
             </div>
 
         </>
