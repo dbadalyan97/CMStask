@@ -24,15 +24,3 @@ exports.verify = async function(req, res, next){
         return res.status(401).send()
     }
 }
-
-
-
-
-
-// const verifiedToken = jwt.verify(token, process.env.JWT_SECRET)
-//     if (!verifiedToken) {
-//       return res.status(401).json({ message: 'unauthorized' })
-//     } else {
-//       req.local.user = await User.findById(verifiedToken.userId)
-//       next()
-//     }

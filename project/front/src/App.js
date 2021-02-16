@@ -3,11 +3,11 @@ import SignIn from "./Components/SignIn/SignIn";
 import SignUp from "./Components/SignUp/SignUp";
 import {BrowserRouter, Route, Redirect, Switch} from "react-router-dom";
 import Profile from "./Components/Profile/Profile";
-import {DataProvider} from '../src/Components/Context/GetData'
+import {DataProvider} from './Components/Context/GetData'
+import ContainedButtons from "./Components/Button/ContainedButtons";
 
 function App() {
     // const [routes, setRouts] = useState()
-
 
     // const useRoutes = isAuthenticated => {
     //     if (isAuthenticated) {
@@ -43,6 +43,10 @@ function App() {
             <div className="App">
                 <BrowserRouter>
                     {/*{routes}*/}
+                    <Route path="/" exact>
+                        <ContainedButtons name="SignIn"/>
+                        <ContainedButtons name="SignUp"/>
+                    </Route>
                     <Route path="/profile" exact>
                         <Profile/>
                     </Route>

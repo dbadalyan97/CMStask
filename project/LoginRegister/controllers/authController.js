@@ -20,7 +20,6 @@ const register = (req, res) => {
             password: hashedPassword
         })
         let finded = await User.findOne({email: user.email})
-        console.log(finded)
         if (finded) {
             res.json({
                 message: 'This email already exsist'
@@ -44,11 +43,9 @@ const register = (req, res) => {
 const login = async (req, res) => {
     let email = req.body.email;
     let password = req.body.password;
-    // console.log(email)
-    // console.log(req.body)
 
+    console.log(req.cookies)
     let findedEmail = await User.findOne({email})
-    //console.log(findedEmail)
     if (findedEmail) {
         bcrypt.compare(password, findedEmail.password, async (err, result) => {
 
@@ -58,21 +55,16 @@ const login = async (req, res) => {
                 })
             }
             if (result) {
-                //console.log(findedEmail)
                 const findedObj = await objects.find({createdBy: findedEmail._id})
-                console.log(findedObj)
                 let payload = {id: findedEmail._id}
 
                 let accessToken = jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, {
                     algorithm: "HS256",
                     expiresIn: process.env.ACCESS_TOKEN_LIFE
                 })
-                console.log(res.cookie("jwt", accessToken))
-                // res.cookie("jwt", findedEmail._id)
-                res.setHeader('Set-Cookie','visited=true; Max-Age=3000; HttpOnly, Secure');
-                res.json({findedObj})
 
-
+                res.cookie("jwt", accessToken, {domain: "domainName:3000", path: '/'})
+                res.json(findedObj)
             } else {
                 res.json({
                     message: 'Password does not matches!'
@@ -88,10 +80,7 @@ const login = async (req, res) => {
 
 
 const profile = async (req, res) => {
-    //console.log(req.body)
     const object = new objects({...req.body})
-
-
     const savedObj = await object.save()
 
     res.json({
@@ -100,22 +89,20 @@ const profile = async (req, res) => {
 
 }
 
-// const deleteToDo = async (req, res) =>
-// {
-//     console.log(req.body)
-//     let result = await	objects.deleteOne({createdBy: req.body.createdBy})
-//     console.log(result)
-//     res.json(result)
-// }
+const deleteToDo = async (req, res) => {
+    console.log(req.body)
+    let result = await objects.deleteOne({createdBy: req.body.createdBy})
+    console.log(result)
+    res.json(result)
+}
 
 
-// const editToDo = async (req, res) =>
-// {
-//     let deleted = await	objects.deleteOne({createdBy: req.body.createdBy});
-//     const edited = new objects({...req.body});
-//     const saveEditedObj = await edited.save();
-//     res.json(saveEditedObj)
-// }
+const editToDo = async (req, res) => {
+    let deleted = await objects.deleteOne({_id: req.body._id});
+    const edited = new objects({...req.body});
+    const saveEditedObj = await edited.save();
+    res.json(saveEditedObj)
+}
 
 
-module.exports = {register, login, profile};
+module.exports = {register, login, profile, deleteToDo, editToDo};

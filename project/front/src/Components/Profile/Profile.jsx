@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useState} from "react";
 import {makeStyles} from '@material-ui/core/styles';
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import TextField from '@material-ui/core/TextField';
@@ -8,6 +8,10 @@ import Fade from '@material-ui/core/Fade';
 import {useHistory} from "react-router-dom";
 import axios from "axios";
 import DataProvider from '../Context/GetData'
+import EditIcon from '@material-ui/icons/Edit';
+import DeleteIcon from '@material-ui/icons/Delete';
+import Button from "@material-ui/core/Button";
+import {uuid} from "uuidv4";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -190,14 +194,13 @@ function Profile() {
         e.preventDefault()
         const data = {[nameObj]: {...fieldsObj, tags: tagsObj.split(",")}}
         axios.post("http://localhost:9000/profile", JSON.stringify(data))
-            .then(res => null)
+            .then(() => null)
             .catch(err => alert(err))
     }
 
-    const getData = useContext(DataProvider)
-    const dataMap = getData.current[0];
-    console.log(dataMap)
-    return ( 
+    const getData = useContext(DataProvider);
+    console.log(getData.currentData[0])
+    return (
         <>
             <header>
                 <div className={classes.logOutBlock}>
@@ -210,7 +213,22 @@ function Profile() {
                     <AddCircleOutlineIcon className={classes.btn} onClick={handleOpen}/>
                 </div>
                 <div>
-                    {dataMap.map((val) => <a href="">{val}</a>)}
+                    {getData.currentData[0].map((val) =>
+                        Object.keys(val).map((item, index, array) =>
+                            item === "name" ?
+                                <div style={{display: "flex", alignItems: "center", justifyContent: "space-around"}}
+                                     key={uuid}>
+                                    <Button variant="contained"
+                                            color="default"
+                                            data={array}
+                                            onClick={() => console.log(val)}>{item}</Button>
+                                    <div>
+                                        <EditIcon/>
+                                        < DeleteIcon/>
+                                    </div>
+                                </div> : console.log(item)
+                        ))
+                    }
                 </div>
                 <Modal
                     aria-labelledby="transition-modal-title"

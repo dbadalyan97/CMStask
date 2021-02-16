@@ -36,12 +36,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function SignIn() {
 
-
     const currentData = useContext(DataContext)
-    console.log(currentData.currentData)
     const [ndata, setNdata] = currentData.currentData;
 
-    console.log(ndata, setNdata)
     const classes = useStyles();
     const history = useHistory();
     const [data, setData] = useState({
@@ -54,16 +51,17 @@ export default function SignIn() {
         setData({...data, [event.target.name]: event.target.value})
     }
 
-    const callAPI = (e) => {
+    const callAPI = async (e) => {
         e.preventDefault();
         axios.post("http://localhost:9000/SignIn", data)
             .then(myData => {
-                    if (myData.data.message === 'Password does not matches!') {
-                        alert('Something is wrong');
+                    if (myData.data.message === "Password does not matches!") {
+                        alert('Password is wrong');
+                    } else if (myData.data.message === 'This email isnt exisit') {
+                        alert('Email is wrong');
                     } else {
                         setNdata(myData.data);
                         history.push('profile')
-                        // Cookies.set('access_token', myData.headers['x-access-token'])
                     }
                 }
             )
